@@ -20,14 +20,22 @@ if __name__ == '__main__':
     dataset_test = load_files("data_amazon/", shuffle=False)
 
     print ("sampels: %d" % len(dataset.data))
+    
+    # obj1 : show features
 
+
+
+    # obj2 :parameter change
+    tv = TfidfVectorizer(min_df=3, max_df=0.95)
     pipeline = Pipeline([
-        ('vect', TfidfVectorizer(min_df=3, max_df=0.95)),
-        ('clf', LinearSVC(C=1000)),
+        ('vect', tv),
+        ('clf', LinearSVC(C=1.0)),
     ])
 
     parameters = {
         'vect__ngram_range': [(1, 1), (1, 2)],
+        # 'vect__ngram_range': [(1, 2)],
+
     }
 
     grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1)
@@ -35,12 +43,20 @@ if __name__ == '__main__':
 
     print(grid_search.grid_scores_)
 
+    y_predicted_train = grid_search.predict(dataset.data)
+
     y_predicted = grid_search.predict(dataset_test.data)
 
     # Print the classification report
     print(metrics.classification_report(dataset_test.target, y_predicted,
                                         target_names=dataset.target_names))
 
+
     # Print and plot the confusion matrix
     cm = metrics.confusion_matrix(dataset_test.target, y_predicted)
     print(cm)
+
+    print tv.get_feature_names()
+
+    print "=========="
+    # obj3: Show misclassified examples
