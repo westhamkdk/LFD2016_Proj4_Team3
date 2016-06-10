@@ -20,12 +20,9 @@ if __name__ == '__main__':
     dataset_test = load_files("data_amazon/", shuffle=False)
 
     print ("sampels: %d" % len(dataset.data))
-    
-    # obj1 : show features
 
 
-
-    # obj2 :parameter change
+    # obj1 :parameter change
     tv = TfidfVectorizer(min_df=3, max_df=0.95)
     pipeline = Pipeline([
         ('vect', tv),
@@ -33,7 +30,7 @@ if __name__ == '__main__':
     ])
 
     parameters = {
-        'vect__ngram_range': [(1, 1), (1, 2)],
+        'vect__ngram_range': [(1, 1), (1, 2), (2,2)],
         # 'vect__ngram_range': [(1, 2)],
 
     }
@@ -42,6 +39,8 @@ if __name__ == '__main__':
     grid_search.fit(dataset.data, dataset.target)
 
     print(grid_search.grid_scores_)
+
+    # obj2 : show features
 
     y_predicted_train = grid_search.predict(dataset.data)
 
