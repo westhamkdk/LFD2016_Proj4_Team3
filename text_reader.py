@@ -39,7 +39,6 @@ if __name__ == '__main__':
         'clf__C': (1,10),
         'clf__loss': ('hinge', 'squared_hinge'),
         'clf__tol': (1e-3, 1e-4)
-
     }
 
     grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1)
@@ -63,6 +62,12 @@ if __name__ == '__main__':
     #     print i
     #     print category
     #     print ("%s: %s" % (category, " ".join(feature_names[top10])))
+
+    best_parameters, score, _ = max(grid_search.grid_scores_, key=lambda x: x[1])
+    for param_name in sorted(parameters.keys()):
+        print("%s: %r" % (param_name, best_parameters[param_name]))
+
+    print score
 
 
     y_predicted = grid_search.predict(dataset_test.data)
