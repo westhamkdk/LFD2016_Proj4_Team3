@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import train_test_split
 from sklearn import metrics
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -31,18 +32,29 @@ if __name__ == '__main__':
 
     parameters = {
         'vect__ngram_range': [(1, 1), (1, 2), (2,2)],
-        # 'vect__ngram_range': [(1, 2)],
-
     }
 
     grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1)
     grid_search.fit(dataset.data, dataset.target)
 
-    print(grid_search.grid_scores_)
+
+    feature_names = np.asarray(grid_search.best_estimator_.named_steps['vect'].get_feature_names())
+
 
     # obj2 : show features
+    top10 = np.argsort(grid_search.best_estimator_.named_steps['clf'].coef_[0])[-10:]
+    worst10 = np.argsort(grid_search.best_estimator_.named_steps['clf'].coef_[0])[:10]
 
-    y_predicted_train = grid_search.predict(dataset.data)
+    print feature_names[top10]
+    print feature_names[worst10]
+
+
+    #
+    # for i, category in enumerate(dataset.target):
+    #     print i
+    #     print category
+    #     print ("%s: %s" % (category, " ".join(feature_names[top10])))
+
 
     y_predicted = grid_search.predict(dataset_test.data)
 
@@ -54,8 +66,6 @@ if __name__ == '__main__':
     # Print and plot the confusion matrix
     cm = metrics.confusion_matrix(dataset_test.target, y_predicted)
     print(cm)
-
-    print tv.get_feature_names()
 
     print "=========="
     # obj3: Show misclassified examples
