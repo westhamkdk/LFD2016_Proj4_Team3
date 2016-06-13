@@ -25,16 +25,20 @@ if __name__ == '__main__':
 
 
     # obj1 :parameter change
-    tv = TfidfVectorizer(min_df=3, max_df=0.95)
+    tv = TfidfVectorizer()
     pipeline = Pipeline([
         ('vect', tv),
-        ('clf', SVC(C=1.0)),
+        ('clf', LinearSVC()),
     ])
 
     parameters = {
-        'vect__ngram_range': [(1, 2)],
-        'vect__min_df': ( 1, 2, 3),
-        'vect__max_df' : ( 1, 2, 3),
+        'vect__ngram_range': [(1,1), (1, 2), (2,2)],
+        'vect__min_df': ( 0.0067, 0.0065, 0.0063),
+        'vect__max_df' : ( 0.945, 0.94, 0.935),
+        'vect__norm': ('l1', 'l2'),
+        'clf__C': (1,10),
+        'clf__loss': ('hinge', 'squared_hinge'),
+        'clf__tol': (1e-3, 1e-4)
 
     }
 
