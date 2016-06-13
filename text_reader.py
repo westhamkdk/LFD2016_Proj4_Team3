@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import train_test_split
 from sklearn import metrics
+from sklearn.svm import SVC
 import numpy as np
 
 
@@ -27,11 +28,14 @@ if __name__ == '__main__':
     tv = TfidfVectorizer(min_df=3, max_df=0.95)
     pipeline = Pipeline([
         ('vect', tv),
-        ('clf', LinearSVC(C=1.0)),
+        ('clf', SVC(C=1.0)),
     ])
 
     parameters = {
-        'vect__ngram_range': [(1, 1), (1, 2), (2,2)],
+        'vect__ngram_range': [(1, 2)],
+        'vect__min_df': ( 1, 2, 3),
+        'vect__max_df' : ( 1, 2, 3),
+
     }
 
     grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1)
@@ -45,8 +49,9 @@ if __name__ == '__main__':
     top10 = np.argsort(grid_search.best_estimator_.named_steps['clf'].coef_[0])[-10:]
     worst10 = np.argsort(grid_search.best_estimator_.named_steps['clf'].coef_[0])[:10]
 
-    print feature_names[top10]
-    print feature_names[worst10]
+
+    print [str(x) for x in feature_names[top10]]
+    print [str(x) for x in feature_names[worst10]]
 
 
     #
@@ -69,3 +74,7 @@ if __name__ == '__main__':
 
     print "=========="
     # obj3: Show misclassified examples
+
+    for i in range(0, len(dataset_test.data)):
+        if dataset_test.target[i] != y_predicted[i]:
+            print ("Original %s: %s" % (dataset_test.target[i], dataset_test.data[i]))
